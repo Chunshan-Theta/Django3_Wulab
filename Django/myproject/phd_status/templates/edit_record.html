@@ -1,0 +1,136 @@
+{% extends "base_PHD.html" %}
+
+
+
+{%block content%}
+<!--
+<div class="w3-container w3-text-grey"">
+    <p>8 items</p>
+</div>
+-->
+<div class="w3-container w3-light-grey w3-padding-32">
+	<h4>新增學生帳號</h4>
+</div>
+<div class="w3-container w3-black w3-padding-16 w3-center">
+	
+	<p>請填妥以下資訊並送出</p>
+</div>
+
+<div class="w3-container w3-light-grey w3-padding-32">    
+    
+    <div>
+    
+    <form name="myForm">
+        <p> {{ Records_type}}</p>
+        
+        <p> 
+        <input class="w3-input w3-border" type="text" id="input_id" value="{{Records_id}}" disabled>
+        <!--<span style="color: red;" ng-show="myForm.Name.$error.required">Name is required.</span>-->
+        </p>
+
+    	<p> 
+		<select id="input_status">
+          <option value="-1" selected>尚未開始</option>
+          <option value="0">失敗</option>
+          <option value="1">通過</option>
+          <option value="2">審核中</option>
+        </select>
+		</p>
+
+		<p>
+        <h5>最後期限,不更改的話請不要選擇時間,保持空白</h5> 
+		<input class="w3-input w3-border" type="date" placeholder="最後期限 / deadline" id="input_deadline" name="deadline">
+		<!--<span style="color: red;" ng-show="myForm.account.$error.required">account is required.</span>-->
+		</p>
+
+		<p>
+        <h5>不更改的話請保持空白</h5> 
+		<input class="w3-input w3-border" type="text" placeholder="備註 / note" id="input_note" name="note" >
+		<!--<span style="color: red;" ng-show="myForm.pws.$error.required">pws is required.</span>-->
+		</p>
+		<p id="post_result" style="color:red;"></p>
+
+		<button id="send" class="w3-button w3-red">Send</button>
+	</form>
+	
+    
+      
+
+    
+    </div>
+</div>
+
+<script type="text/javascript">
+function disabled_input(){
+	$("#post_result").html("");
+	$("#input_status").attr('disabled', true);
+    $("#input_deadline").attr('disabled', true);
+    $("#input_note").attr('disabled', true);
+    $("#send").attr('disabled', true);
+}
+function abled_input(){
+	$("#input_status").attr('disabled', false);
+    $("#input_deadline").attr('disabled', false);
+    $("#input_note").attr('disabled', false);
+    $("#send").attr('disabled', false);
+}
+$("form").attr('disabled', true);
+$("#send").click(function(){
+	/*
+	$.post("./newUser/", {
+            "post_account": $("#input_account").val(),
+            "post_pws":$("#input_pws").val(),
+            "post_studentname":$("#input_Name").val()
+        },
+        function(data, status) {         
+                
+        	console.log(status);
+    		console.log(data);
+            
+        });
+    */
+    disabled_input();
+    var input_id = $("#input_id").val().toString();
+    var input_status = $("#input_status").val().toString();
+    var input_deadline = $("#input_deadline").val().toString();
+    var input_note = $("#input_note").val().toString();
+    console.log(input_id+input_status+input_deadline+input_note);
+    
+    
+    $("#post_result").html("請稍後....");
+	$.ajax({
+            type :"POST",
+            url  : "../../editrecords/",
+            data : { 
+                "records_id": input_id,
+	            "status":input_status,
+                "note":input_note,
+	            "deadlines":input_deadline                          
+                },
+            dataType: "text",
+            success : function(data, status) {
+            	console.log(data);
+                if(data==''){
+                    alert("success");
+                    location.href ="../reviewUsers/"
+
+
+                }else{
+
+                    $("#post_result").html("error: "+data);                   
+
+
+                }
+                abled_input(); 
+            	                          
+        	}
+        })
+    
+});
+
+</script>
+
+
+
+{% endblock%}
+

@@ -1,0 +1,95 @@
+{% extends "base_PHD.html" %}
+
+
+
+{%block content%}
+<!--
+<div class="w3-container w3-text-grey"">
+    <p>8 items</p>
+</div>
+
+<div class="w3-container w3-light-grey w3-padding-32">
+	<h4>新增學生帳號</h4>
+</div>
+-->
+<div class="w3-container w3-black w3-padding-16 w3-center">
+	
+	<p>{{stu_name}}</p>
+</div>
+
+<div class="w3-container w3-light-grey w3-padding-32">    
+    
+    <div id="StudentList">
+    
+    	 	<div class="w3-row w3-grayscale">
+
+
+			    <div class="w3-col l3 s3">
+			        <h5>name</h5>
+			    </div>
+			    <div class="w3-col l3 s2">
+			    	<h5>account</h5>
+			    </div>
+			    <div class="w3-col l3 s3">
+			        <h5>passwords</h5>
+			    </div>
+			    <div class="w3-col l2 s3">
+			    	<h5>created Time</h5>
+			    </div>
+			    <div class="w3-col l1 s3">
+			        <p>
+			        	Link
+			        </p>
+			    </div>
+
+
+			</div>
+      	
+      	<hr style="border-bottom: 1px solid #8c8b8b;font-size:initial;margin:5px 0;"/>
+    
+	{% for div in UserRecords %}
+			
+    	 	<div class="w3-row w3-grayscale">
+			    <div class="w3-col l3 s3">
+			        <h5>{{div.4}}</h5>
+			    </div>
+			    <div class="w3-col l3 s3">
+			        <h5>{{div.1}}</h5>
+			    </div>
+			    <div class="w3-col l3 s3">
+			        <h5>{{div.2}}</h5>
+			    </div>
+			    <div class="w3-col l2 s3">
+			        <h5>{{div.5}}</h5>
+			    </div>
+			    <div class="w3-col l1 s3">
+			        <p>
+			        	<a href="" class="w3-bar-item w3-button" onclick="redired_review('{{div.1}}');"><i class="fa fa-eye"></i></a>
+			        	
+			        </p>
+			    </div>
+
+
+			</div>
+      	
+      	<hr style="border-bottom: 1px solid #8c8b8b;font-size:initial;margin:5px 0;"/>
+    {% endfor %}
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+function redired_review(Taccount) {
+    var txt;
+    location.href = "../reviewRecords/?Taccount="+Taccount;
+    
+    
+}
+
+</script>
+
+{% endblock%}
+
