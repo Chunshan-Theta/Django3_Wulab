@@ -47,8 +47,9 @@
     
     </div>
 </div>
-
+{% csrf_token %}
 <script type="text/javascript">
+var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 function disabled_input(){
 	$("#post_result").html("");
 	$("#input_account").attr('disabled', true);
@@ -64,6 +65,7 @@ function abled_input(){
 }
 $("form").attr('disabled', true);
 $("#send").click(function(){
+    //xhr.setRequestHeader("X-CSRFToken", csrftoken);
 	/*
 	$.post("./newUser/", {
             "post_account": $("#input_account").val(),
@@ -84,11 +86,14 @@ $("#send").click(function(){
     $("#post_result").html(input_account+" 帳號新增中，請稍後");
 	$.ajax({
             type :"POST",
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", csrftoken);
+            },
             url  : "../../newUser/",
             data : { 
                 "post_account": input_account,
 	            "post_pws":input_pws,
-	            "post_studentname":input_Name                          
+	            "post_studentname":input_Name,                       
                 },
             dataType: "text",
             success : function(data, status) {
@@ -97,6 +102,9 @@ $("#send").click(function(){
             		$("#post_result").html(input_account+" 帳號初始化中，請稍後");
             		$.ajax({
 			            type :"POST",
+                        beforeSend: function(request) {
+                            request.setRequestHeader("X-CSRFToken", csrftoken);
+                        },
 			            url  : "../../initUser/",
 			            data : { 
 			                "Taccount": input_account                          

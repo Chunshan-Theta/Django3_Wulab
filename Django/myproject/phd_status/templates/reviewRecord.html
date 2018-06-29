@@ -37,12 +37,7 @@
 			    <div class="w3-col l2 s3">
 			        <h5>最後更新時間</h5>
 			    </div>
-			    <div class="w3-col l1 s3">
-			        <p>
-			        	<i class="fa fa-edit">修改</i> 
-			        	<i class="fa fa-times">刪除</i>
-			        </p>
-			    </div>
+			    
 
 
 			</div>
@@ -86,12 +81,7 @@
 			    <div class="w3-col l2 s3">
 			        <h5>{{div.4}}</h5>
 			    </div>
-			    <div class="w3-col l1 s3">
-			        <p>
-			        	<a href="" class="w3-bar-item w3-button" onclick="redired_edit('{{div.5}}','{{div.0}}');"><i class="fa fa-edit"></i></a>
-			        	<a href="" class="w3-bar-item w3-button" onclick="del_records('{{div.5}}');"><i class="fa fa-times"></i></a>
-			        </p>
-			    </div>
+			    
 
 
 			</div>
@@ -102,54 +92,7 @@
 </div>
 
 
-{% csrf_token %}
-<script type="text/javascript">
-var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
-
-function del_records(record_id) {
-    var txt;
-    if (confirm("Press a button!")) {
-        console.log(record_id+": You pressed OK!");
-        $.ajax({
-            type :"POST",
-            beforeSend: function(request) {
-                request.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            url  : "../../delrecords/",
-            data : { 
-                "records_id": record_id,                        
-                },
-            dataType: "text",
-            success : function(data, status) {
-            	console.log(data);
-            	if(data == ''){
-            		alert('刪除成功');
-            		location.reload();
-            	}
-            	else{
-            		alert('意外失敗');
-            	}
-            	//  
-            	       	
-            	                          
-        	}
-        })
-    } else {
-        console.log(record_id+": You pressed Cancel!");
-    }
-    
-}
-
-
-function redired_edit(record_id,record_type) {
-    var txt;
-    location.href = "../editrecords/?Records_id="+record_id+"&Records_type="+record_type;
-    
-    
-}
-
-</script>
 
 {% endblock%}
 

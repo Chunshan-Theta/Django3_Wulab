@@ -60,7 +60,11 @@
     </div>
 </div>
 
+
+{% csrf_token %}
 <script type="text/javascript">
+var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
 function disabled_input(){
 	$("#post_result").html("");
 	$("#input_status").attr('disabled', true);
@@ -100,6 +104,9 @@ $("#send").click(function(){
     $("#post_result").html("請稍後....");
 	$.ajax({
             type :"POST",
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", csrftoken);
+            },
             url  : "../../editrecords/",
             data : { 
                 "records_id": input_id,

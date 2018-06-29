@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import sys
 from django.http import HttpResponseRedirect
+from django.template import RequestContext
+
 #sys.path.append('/home/gavin/Desktop/Django3server/Django/myproject/RestAPI/models/')
 from phd_status.models import MySQL_model as md
 import datetime
@@ -19,17 +21,24 @@ def hello_world3(request):
     return HttpResponseRedirect('./view/Login/')
 
 def view_Login(request):
+
+    del request.session['utype']
+    del request.session['uaccount']
     template = 'Login.html'
     responds = {'stringData': str(datetime.datetime.now()),}
     return render(request,template,responds )
 
 def view_adduser(request):
+    if not 'utype' in request.session or request.session['utype'] != -1:
+        return HttpResponseRedirect('../Login/')
     template = 'adduser.html'
-    responds = {'stringData': str(datetime.datetime.now()),}
+    responds = {'stringData': str(datetime.datetime.now()),'s':request.session['utype']}
     return render(request,template,responds )
 
-def view_reviewRecords(request):
+def view_reviewRecords_admin(request):
     md.connectDB()
+    if not 'utype' in request.session or request.session['utype'] != -1:
+        return HttpResponseRedirect('../Login/')
     if not Ensureinput(request.GET,["Taccount"]) :
         
         re = "data of the POST requests aren't complete. "
@@ -48,8 +57,33 @@ def view_reviewRecords(request):
     responds = {'UserRecords': datafromsql,"stu_name":stu_name}
     return render(request,template,responds )
 
-def view_reviewUsers(request):
+def view_reviewRecords_normal(request):
+    if not 'uaccount' in request.session:
+        return HttpResponseRedirect('../../Login/')
 
+    md.connectDB()
+    if not Ensureinput(request.GET,["Taccount"]) :
+        
+        re = "data of the POST requests aren't complete. "
+        return  HttpResponse(re)
+    else:
+        stu_account =  str(request.GET['Taccount'])    
+    if stu_account != request.session['uaccount']:
+        return  HttpResponse('Invalid identity')
+
+
+    sql = "SELECT `UserRecords`.`RecordType`,`UserRecords`.`status`,`UserRecords`.`deadlines`,`UserRecords`.`note`,`UserRecords`.`UpdateTime`,`UserRecords`.`Record_id` FROM `UserRecords`,`UserList` WHERE `UserRecords`.`user_id` = `UserList`.`user_id` AND `UserList`.`account` = '"+stu_account+"' ORDER BY `UserRecords`.`RecordType` ASC"
+    datafromsql = md.exeSQl(sql)
+    md.close()
+
+
+    template = 'reviewRecord.html'
+    responds = {'UserRecords': datafromsql,"stu_name":stu_account}
+    return render(request,template,responds )
+
+def view_reviewUsers(request):
+    if not 'utype' in request.session or request.session['utype'] != -1:
+        return HttpResponseRedirect('../Login/')
     md.connectDB()  
 
 
@@ -102,17 +136,17 @@ def login(request):
     datafromsql = md.exeSQl(sql)
     
     md.close()
-    request.session['uid'] = 'bar'
+    
     if datafromsql == []:
        return  HttpResponse('not found the user.') 
     else:
         u_id = datafromsql[0][0]
-        u_typy = datafromsql[0][3]
-        
-        
+        utype = datafromsql[0][3]
+        request.session['utype'] = utype
+        request.session['uaccount'] = u_account
 
-        if u_typy !=-1:            
-            return HttpResponseRedirect('../view/reviewRecords/?Taccount='+u_account)
+        if utype !=-1:            
+            return HttpResponseRedirect('../view/s/reviewRecords/?Taccount='+u_account)
         else:
             return HttpResponseRedirect('../view/reviewUsers/')
         
@@ -177,7 +211,7 @@ def init_user(request):
 
     #return  HttpResponseRedirect('./')
     return  HttpResponse(datafromsql)
-
+@csrf_exempt
 def del_records(request):
 
     if not 'records_id' in request.POST or request.POST["records_id"]=="":
@@ -193,6 +227,7 @@ def del_records(request):
         return  HttpResponse(datafromsql)
 
 # UPDATE `UserRecords` SET `status` = '1',`note` = '安安',`deadlines`='2016-02-02' WHERE `UserRecords`.`Record_id` = 3
+@csrf_exempt
 def edit_records(request):
 
     if not Ensureinput(request.POST,["records_id","status"]) :

@@ -34,13 +34,14 @@ from phd_status.views import hello_world3
 from phd_status.views import init_user
 from phd_status.views import add_user
 from phd_status.views import view_adduser
-from phd_status.views import view_reviewRecords
+from phd_status.views import view_reviewRecords_admin
 from phd_status.views import del_records
 from phd_status.views import edit_records
 from phd_status.views import view_edit_records
 from phd_status.views import view_reviewUsers
 from phd_status.views import view_Login
 from phd_status.views import login
+from phd_status.views import view_reviewRecords_normal
 urlpatterns = [
     #url(r'^admin/', include(admin.site.urls)),
     url(r'^NewsTW/each/(?P<c>\S*)/$', SQL_each),
@@ -59,7 +60,8 @@ urlpatterns = [
     url(r'^PHD/delrecords/$', del_records),
     url(r'^PHD/editrecords/$', edit_records),
     url(r'^PHD/view/adduser/$', view_adduser),
-    url(r'^PHD/view/reviewRecords/$', view_reviewRecords),
+    url(r'^PHD/view/reviewRecords/$', view_reviewRecords_admin),
+    url(r'^PHD/view/s/reviewRecords/$', view_reviewRecords_normal),
     url(r'^PHD/view/editrecords/$', view_edit_records),
     url(r'^PHD/view/reviewUsers/$', view_reviewUsers),
     url(r'^PHD/view/Login/$', view_Login),
